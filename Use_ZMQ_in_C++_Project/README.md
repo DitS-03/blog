@@ -33,8 +33,7 @@ ZeroMQはソケット通信を抽象化しているので，接続の際に通�
     * `tcp://eth0:4321` (Bindする側)
     * `tcp://127.0.0.1:1234` (Connectする側)
 * udp (一部の通信モデルのみ)
-* pgm ([Pragmatic General Multicast](https://en.wikipedia.org/wiki/
-Pragmatic_General_Multicast))
+* pgm ([Pragmatic General Multicast](https://en.wikipedia.org/wiki/Pragmatic_General_Multicast))
 
 なお，ZeroMQではほとんどで通信モデルのどちらがBindする側になるかを制約しません．ユースケースに合わせて設定しましょう．
 加えてZeroMQでは，同じソケットタイプであれば一つのエンドポイントに複数のソケットをBindすることが可能です．特に受信側が複数ある場合，メッセージを「全員が受け取る」か，「排他的に誰か一人が受け取る」かは通信モデルによって変わります．
@@ -66,7 +65,7 @@ Pragmatic_General_Multicast))
 
 名前だけだと分かりづらいので，以下で各通信モデルの特徴を解説．
 
-* Request-reply pattern
+#### Request-reply pattern
     1. ZMQ_REQ -> ZMQ_REP
     2. ZMQ_REP -> ZMQ_REQ
 
@@ -77,28 +76,28 @@ Pragmatic_General_Multicast))
     ZMQ_ROUTERはZMQ_REQからmultipartメッセージを受け取り，第一部分をPOPして読むことでルーティング先のDEALERを決定する．
     ZMQ_DELAERはZMQ_ROUTERからのメッセージを自分と接続するZMQ_REPに排他的に分配する．多段にすることも可能．
 
-* Publish-subscribe pattern
+#### Publish-subscribe pattern
     一方的にメッセージを送信する側(ZMQ_PUB)と，一方的にメッセージを受信する側(ZMQ_SUB)に分かれる通信モデル．
     ZMQ_SUBのバインド先を束ねた場合，全てのZMQ_SUBがバインド先に送られてきたメッセージを受け取る．<br/>
     ZMQ_XSUBはZMQ_XPUB側に対して，受信を一時停止することを伝えることができる.
 
-* Pipeline pattern
+#### Pipeline pattern
     一方的にメッセージを送信する側(ZMQ_PUSH)と，一方的にメッセージを受信する側(ZMQ_PULL)に分かれる通信モデル．<br/>
     ZMQ_PULLのバインド先を束ねた場合，送られてきたメッセージはバインドされているZMQ_PULLのうちのどれか一つにだけ渡される (ラウンドロビン)．
 
-* Exclusive pair pattern
+#### Exclusive pair pattern
     ZMQ_PAIR同士を1対1で接続して使う．inprocのみしかサポートしない．<br/>
     他の通信モデルとは異なり，特に制約なく双方向にメッセージを送受信できる．
 
-* Native pattern
+#### Native pattern
     本来ZeroMQではZeroMQ独自のメッセージフォーマットを用いる ([参考](https://qiita.com/gwappa/items/9677e1ea4adcf2d457f4)) ため，ZeroMQのソケットは基本的にZeroMQ以外のメッセージ (例えばhttp) の送受信に使うことができない．<br\>
     ZMQ_STREAMは，送受信されるメッセージを純粋なtcpメッセージとして取り扱うためのもので，例えばZeroMQを用いてHTTPサーバを立てることが可能 ([参考](https://stackoverflow.com/questions/33114758/))
 
-* Client-server pattern
+#### Client-server pattern
     最近追加されたDraft段階の通信モデル．
     Request-reply patternの条件緩和版で，一番最初にZMQ_CLIENTからZMQ_SERVERにメッセージを送る以外は自由なタイミングでメッセージを送信し合うことができるらしい．
 
-* Radio-dish pattern
+#### Radio-dish pattern
     最近追加されたDraft段階の通信モデル．
     Publish-subscribe patternではZMQ_SUB側でメッセージをフィルタリングするが，Radio-dish patternではZMQ_RADIO側が送信するグループを選択し，そのグループに所属しているZMQ_DISHだけがメッセージを受け取る．
 
