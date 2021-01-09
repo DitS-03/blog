@@ -233,5 +233,20 @@ int main()
 特に問題なくビルドできるかと思います．
 
 ### 動作確認
-ビルドしたアプリを実行してみましょう．
+ビルドしたアプリを実行してみましょう．これで，C++でメッセージを配信している状態になりました．
 
+動作確認のためにpythonでメッセージを受け取ってみます．
+```
+$ pip install pyzmq
+$ python
+>>>> import zmq
+>>>> context = zmq.Context()
+>>>> socket = context.socket(zmq.SUB)
+>>>> socket.connect("tcp://127.0.0.1:5556")
+>>>> socket.setsockopt_string(zmq.SUBSCRIBE, "")  # 必ずフィルタを設定する必要がある
+>>>> m = socket.recv_string()
+>>>> m
+'hello world'
+```
+
+実際にメッセージを受け取ることができたら成功です．
