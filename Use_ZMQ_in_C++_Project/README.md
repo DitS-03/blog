@@ -197,20 +197,22 @@ cppファイル1つをcmakeでビルドする最小構成を試します．
 | - sample.cpp
 ```
 
+#### CMakeLists.txt
 ```CMakeLists.txt
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 project(cppzmq-sample CXX)
-
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 find_package(cppzmq REQUIRED)
-
 add_executable(sample sample.cpp)
 target_link_libraries(sample cppzmq)
 ```
 
+CMakeLists.txtには `find_package(cppzmq REQUIRED)` と `target_link_libraries(sample cppzmq)` を追加するだけで，cppzmqを使う準備は完了です．非常に簡単でした．
+
+#### sample.cpp
 ```sample.cpp
 #include <zmq.hpp>
 #include <iostream>
@@ -229,12 +231,36 @@ int main()
     }
 }
 ```
-特に問題なくビルドできるかと思います．
+これまで述べていませんでしたが，プロセスの中で実際に通信する処理は `context` と呼ばれるオブジェクトが全てを担います．従って，zmqを使う際の流れは次のようになります．
+
+1. `context`を生成する
+2. `context`から`socket`を生成する
+3. `socket`を bind/connect する
+4. 必要があれば `socket` にoptionを設定する
+5. 送受信を行う
+
+今回の送信部のプログラムでは(4)の手順に相当するコードはありません．
 
 ### 動作確認
-ビルドしたアプリを実行してみましょう．これで，C++でメッセージを配信している状態になりました．
+以上の2つのファイルだけで，cmakeコマンドとmakeコマンドを使って特に問題なくビルドできるかと思います．
 
-動作確認のためにpythonでメッセージを受け取ってみます．
+```
+$ cd path/to/project_root
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make 
+```
+
+ビルドしたアプリを実行してみましょう．
+
+```
+$ ./sample
+```
+
+これで，C++でメッセージを配信している状態になりました．
+
+それでは，動作確認のためにせっかくなので別言語であるpythonでメッセージを受け取ってみましょう．
 ```
 $ pip install pyzmq
 $ python
@@ -245,7 +271,14 @@ $ python
 >>>> socket.setsockopt_string(zmq.SUBSCRIBE, "")  # 必ずフィルタを設定する必要がある
 >>>> m = socket.recv_string()
 >>>> m
-'hello world'
+'Hello world'
 ```
 
+zmqのsubscriberは，必ず `socket.setsockopt_string(zmq.SUBSCRIBE, "")` のようにメッセージのフィルタリングの設定をする必要があるので注意してください (これがzmqを使う流れの(4)に相当するコードです)．
+
 実際にメッセージを受け取ることができたら成功です．
+
+c++でもこれだけ簡単にメッセージの送受信ができるととても楽ですね．
+
+## 終わりに
+cppzmqをセットアップするところまでで力尽きてしまったので，次回はcppzmqのAPIを一通り使うようなサンプルを作って解説記事にしてみようと思います．
