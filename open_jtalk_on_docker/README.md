@@ -8,7 +8,9 @@ TBD
 OpenJTalkをDockerで動作させる手順を知ることができる．
 
 ### 動機
-[u6kさんのコンテナ](https://hub.docker.com/r/u6kapps/open_jtalk/)が素晴らしかったので，ワンライナーで音声を合成&再生する手順をまとめてみました！びっくりするくらい低遅延で使えて最高です！
+[u6kさんのコンテナ](https://hub.docker.com/r/u6kapps/open_jtalk/)が素晴らしかったので，ワンライナーで音声を合成&再生する手順をまとめてみました！
+
+びっくりするくらい低遅延で使えて最高です！
 
 ## 環境構築手順
 ### 事前準備
@@ -18,12 +20,10 @@ OpenJTalkをDockerで動作させる手順を知ることができる．
 
 #### Docker
 [公式サイト](https://www.docker.com/get-started)でインストールすればOK．
-
 Windowsの場合はWLS周りのセットアップを追加で要求されることがあります．エラーメッセージなどを読んで随時対応しましょう．
 
 #### sox
 soxは音声データをCLIで処理する十徳ナイフ的なツールです．
-
 macであれば`homebrew`([リンク](https://brew.sh/index_ja))，windowsであれば`scoop`([リンク](https://scoop.sh))などでインストールできます．
 
 * brewの場合
@@ -38,7 +38,6 @@ scoop install sox
 
 加えて、Windowsの場合にはsoxの使うAudio Driverを環境変数で設定する必要があります．
 windowsの「環境変数の設定」で`AUDIODRIVER`という環境変数を作り、`waveaudio`を設定してください．
-
 (なお，使用可能なAudioDriverは`sox -h`で確認できます)
 
 
